@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 export default function ModalTransactions({ fun }) {
   console.log(fun.data);
@@ -44,7 +44,7 @@ export default function ModalTransactions({ fun }) {
             </div>
             <div className="flex justify-between font-semibold text-black text-center text-[17px] md:text-[17px] mb-2">
               <div>Prise: </div>
-              <div>₹ {fun.data.Prise}</div>
+              <div>₹ {fun.data.Price}</div>
             </div>
             <div className="flex flex-col justify-start font-semibold md:grid grid-cols-2 text-black text-center text-[17px] md:text-[17px] mb-2">
               <div className="text-left">Quantity: </div>

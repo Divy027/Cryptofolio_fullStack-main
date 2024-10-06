@@ -1,16 +1,9 @@
 import React from "react";
-import Footer from "./Footer";
 import List from "./List";
 import { Link } from "react-router-dom";
 import bg from "../Images/bg3.png";
 
 export default function Home() {
-  //   const openmodal= ()=>{
-
-  //      setOpen(true);
-
-  //  }
-
   return (
     <div>
       <div className=" bg-[#171b26]  h-full md:grid md:grid-cols-2 ">
@@ -20,18 +13,9 @@ export default function Home() {
           </div>
           <div className="flex justify-around md:justify-start">
             <div className="font-bold text-[25px] sm:text-[35px] md:text-[45px] lg:text-[55px] xl:text-[65px] grad_text decoration-transparent">
-              Grow With CryptoFolio
+              Grow With BlockEx
             </div>
           </div>
-          {/* <div className="flex justify-center">
-            <p className='textwhite text-base md:text-xl lg:text-3xl'>we are   </p>
-           
-                <Typed className='textwhite text-base md:text-xl lg:text-3xl ml-2'
-                strings={['Simple','Secure','innovative']}
-                typeSpeed={50}
-                backSpeed={40}
-                loop/>
-          </div> */}
           <div className=" text-[10px] sm:text-[15px] md:text-[18px] lg:text-[22px] xl:text-[26px]">
             {" "}
             Trade with confidence in the world of crypto
@@ -49,20 +33,12 @@ export default function Home() {
             width: "500px",
 
             backgroundImage: `url(${bg})`,
-            // backgroundRepeat: " no-repeat",
-            // // backgroundSize: "cover",
-            // backgroundPosition: "center",
-            // backgroundAttachment: "fixed",
-            // backgroundize: "contains",
             backgroundRepeat: "no-repeat",
-            // backgroundAttachment: "fixed",
-            // backgroundSize: "cover",
             backgroundSize: "100% 100%",
           }}
         ></div>
       </div>
       <List />
-      {/* <Footer /> */}
     </div>
   );
 }

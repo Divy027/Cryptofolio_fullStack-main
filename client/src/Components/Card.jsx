@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function Card() {
   const url =
@@ -13,9 +13,6 @@ export default function Card() {
       setinfo(response.data);
     });
   }, []);
-  // console.log(open2[0])
-  // console.log(open2[1])
-  console.log(info);
 
   if (info.length === 0) {
     return <div>loading</div>;

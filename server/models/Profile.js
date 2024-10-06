@@ -1,4 +1,3 @@
-//table
 const mongoose =require('mongoose');
 require('mongoose-type-email');
 
@@ -12,9 +11,5 @@ const ProfileSchema=new mongoose.Schema({
         
     }
 });
-
-
-//we have created the table now we will export this table
-
 
 module.exports=mongoose.model('Profile',ProfileSchema)

@@ -8,7 +8,6 @@ router.post("/userdetails", async (req, res) => {
   const id = req.body.UserId;
   console.log(id);
   try {
-   
     const Data = await User.findOne({ _id: id }).select("-password");
     console.log("userdata");
     console.log(Data);

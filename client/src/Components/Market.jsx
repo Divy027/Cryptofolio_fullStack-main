@@ -4,7 +4,6 @@ import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import Footer from "./Footer";
 
 export default function Market() {
   const url =
@@ -40,10 +39,7 @@ export default function Market() {
   };
 
   const [Query, setQuery] = useState("");
-  console.log(Query);
   const filtered = getFilteredItem(Query, info);
-
-  console.log(filtered);
 
   return (
     <div className="pt-[100px] bg-[#171b26] ">
@@ -76,13 +72,6 @@ export default function Market() {
                     }}
                     state={{ value }}
                   >
-                    {/* <Link
-                    to={{
-                      pathname: "/coin",
-                      hash: `${value.name}`,
-                    }}
-                    state={{ name: `${value.name}`, Symbol: `${value.symbol}` }}
-                  > */}
                     <div className="bg-[#1b202d] rounded-md shadow-md p-5 shadow-[#000000be]  m-3 w-[180px] border-t-2 border-[#00000050]">
                       <div className=" mx-auto w-[100px] h-[100px] ">
                         <img src={value.image} alt=""></img>

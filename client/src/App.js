@@ -4,10 +4,10 @@ import Buy from "./Components/Market";
 import "./App.css";
 import { React, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginModal from "./Components/LoginModal";
+import RegisterModal from "./Components/RegisterModal";
 import Dashboard from "./Components/UserInformation/Dashboard";
 import Nav from "./Components/Nav";
-import Signup from "./Components/Signup";
+import Signin from "./Components/Signin";
 import UpdateInfo from "./Components/UserInformation/UpdateInfo";
 import ProtectedBuyTransaction from "./Components/Protected/ProtectedBuyTransaction";
 import ProtectedSellTransaction from "./Components/Protected/ProtectedSellTransaction"
@@ -19,8 +19,8 @@ function App() {
 
   return (
     <Router>
-      {open && <LoginModal closemod={[setOpen, setOpensign]} />}
-      {opensign && <Signup closemod={[setOpen, setOpensign]} />}
+      {open && <RegisterModal closemod={[setOpen, setOpensign]} />}
+      {opensign && <Signin closemod={[setOpen, setOpensign]} />}
 
       <div>
         <Nav open={[setOpen, setOpensign]} />
@@ -43,7 +43,6 @@ function App() {
           <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/profileUpdate" element={<UpdateInfo />} />
 
-          {/* <Route exact path="/createUser" element={<LoginModal/>}/> */}
         </Routes>
       </div>
     </Router>

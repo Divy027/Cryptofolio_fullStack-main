@@ -7,7 +7,7 @@ const subTransaction = new mongoose.Schema({
   CoinName: { type: String, require: true },
   Quantity: { type: Number, require: true },
   Amount: { type: Number, require: true },
-  Prise: { type: Number, require: true },
+  Price: { type: Number, require: true },
   Date: { type: String },
   type: { type: String },
 });
@@ -19,7 +19,5 @@ const transactionSchema = new mongoose.Schema({
   },
   Transaction: [subTransaction]
 });
-
-//we have created the table now we will export this table
 
 module.exports = mongoose.model("transaction", transactionSchema);

@@ -1,23 +1,23 @@
-//route to frontend and table
-// the data from form will store here and go to backend
-
 const express = require("express");
 const router = express.Router();
-const User = require("../models/User"); //we select the table
-const Profile = require("../models/Profile"); //we select the table
-const Wallet = require("../models/Wallet"); //we select the table
+const User = require("../models/User"); 
+const Profile = require("../models/Profile"); 
+const Wallet = require("../models/Wallet"); 
 const { body, validationResult } = require("express-validator");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const jwtSecret = "abcdefghijklmnopqrstuvwxyz";
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const jwtSecret = process.env.SECRET;
 
 router.post(
   "/creatuser",
   body("email", "invalid email").isEmail(),
   body("password", "too small").isLength({ min: 5 }),
   async (req, res) => {
-    // console.log(req.body);
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -33,7 +33,6 @@ router.post(
       console.log(data.length);
       if (data.length === 0) {
         await User.create({
-          // first_name is column name and instead of hardcode we will write req.body.<parameter_name>
           first_name: req.body.first_name,
           last_name: req.body.last_name,
           age: req.body.age,
@@ -41,13 +40,10 @@ router.post(
           email: req.body.email,
           password: securepassword,
         }).then(console.log("user created"));
-        // .then(res.json({success:true,userexist:false}))
 
-        const email = req.body.email;
         let userdata = await User.findOne({ email: req.body.email });
         console.log("user data which is just created");
         console.log(userdata);
-        // console.log(userdata.password);
         
         await Wallet.create({
           UserId: userdata._id,
@@ -71,11 +67,7 @@ router.post(
       } else {
         console.log("user exist");
         res.json({ success: false, userexist: true });
-        // console.log(res);
       }
-
-      // res.send({ message: "done" });
-      // console.log("hello_value created");
     } catch (error) {
       console.log(error);
     }

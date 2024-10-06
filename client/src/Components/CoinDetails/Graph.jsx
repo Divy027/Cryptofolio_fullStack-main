@@ -1,11 +1,8 @@
-import axios from "axios";
-import React, { useState } from "react";
+import React from "react";
 import { useEffect } from "react";
-import Nav from "../Nav";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useRef } from "react";
 import CoinInfo from "./CoinInfo";
-
 
 let tvScriptLoadingPromise;
 
@@ -64,19 +61,13 @@ export default function Details({ open }) {
   }, []);
 
   //-------------------------------------chart---------------------------------------
-
-  useEffect(() => {
-    // console.log(state);
-  }, [state]);
-  // const {coin}=location.state;
-
-
-  
-
   return (
     <div className=" h-content p-5 min-h-screen w-[100%] pt-14 bg-[#171b26]">
       
-      <div className="w-[300px] grad_bg blur-[220px]  right-[90px] h-[300px] absolute border-2 rounded-full"></div>
+      <div className="w-[300px] grad_bg blur-[220px]  right-[90px] h-[300px] absolute border-2 rounded-full">
+
+        
+      </div>
 
 
       <div className="tradingview-widget-container ">

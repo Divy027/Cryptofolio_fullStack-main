@@ -1,13 +1,15 @@
-const express = require("express");
-const router = express.Router();
-const mongoose = require("mongoose");
-const transaction = require("../models/Transactions"); //we select the table
-const Wallet = require("../models/Wallet"); //we select the table
+const transaction = require("../models/Transactions");
+const Wallet = require("../models/Wallet"); 
 const jwt = require("jsonwebtoken");
 const Transactions = require("../models/Transactions");
-const jwtSecret = "abcdefghijklmnopqrstuvwxyz";
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const jwtSecret = process.env.SECRET;
 
 const UserSellTransactions = async (req, res) => {
+try{
   console.log(req.body);
   console.log("======================================================");
   const transactiondetails = req.body.Transaction;
@@ -87,20 +89,10 @@ const UserSellTransactions = async (req, res) => {
     );
     res.send("NO");
   }
+}catch(e) {
+  res.send("NO");
+}
 
-  // res.send(data);
-  // await Transaction.findOneAndUpdate(
-  //   { email: req.body.email },
-  //   {
-  //     name: req.body.name,
-  //     description: req.body.description,
-  //   }
-  // )
-  //   .then(async(data) => {
-  //     console.log("updated");
-  //     console.log(data);
-  //   })
-  //   .catch();
 };
 
 module.exports = { UserSellTransactions };

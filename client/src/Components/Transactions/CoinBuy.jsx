@@ -4,345 +4,270 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 export default function CoinBuy() {
   const { state } = useLocation();
-  const navigate = useNavigate();
+  const login = localStorage.getItem("authToken");
+  const [data, setData] = useState();
+  const [currPrice, setCurrPrice] = useState();
+  const [id, setId] = useState();
+  const [allTransactions, setAllTransactions] = useState([]);
+  const [currBalance, setCurrBalance] = useState();
+  const [quantity, setQuantity] = useState("");
+  const [amount, setAmount] = useState("");
+  const [amountForAmount, setAmountForAmount] = useState("");
+  const [quantityForAmount, setQuantityForAmount] = useState("");
 
-  console.log("hello");
-  // console.log(state.data);
-
-  const [data, setdata] = useState();
-  const [currprise, setcurrprise] = useState();
-
+  // Set data from route state
   useEffect(() => {
-    setdata(state.data);
-  }, [data]);
+    if (state?.data) {
+      setData(state.data);
+    }
+  }, [state]);
 
-  const [id, setid] = useState();
-  const getid = async () => {
-    const response = await fetch(
-      "https://cryptofolio-backstack-aiwo.onrender.com/dashboard/dashboard",
-      {
-        method: "POST",
-        body: JSON.stringify({ Token: localStorage.authToken }),
-        mode: "cors",
-        headers: {
-          "Content-type": "application/json",
-        },
-
-        header: "Access-Control-Allow-Origin: *",
-      }
-    );
-    let json = await response.json();
-    console.log("response we get");
-    console.log(json);
-    setid(json.id);
-  };
-  // useEffect(async () => {
-  //   getid();
-  // }, []);
-
+  // Set current price
   useEffect(() => {
-    setcurrprise(
-      ((`${state.data.current_price}` / 100) * 70).toLocaleString("en-IN", {
+    if (data) {
+      const calculatedPrice = (data.current_price / 100) * 70;
+      setCurrPrice(calculatedPrice.toLocaleString("en-IN", {
         maximumFractionDigits: 2,
         style: "currency",
         currency: "INR",
-      })
-    );
+      }));
+    }
+  }, [data]);
 
-    console.log(currprise);
-    console.log(data);
-  }, []);
-
-  //-----------------transactions--------------------//
-
-  const login = localStorage.getItem("authToken");
-  console.log(login);
-
-  const [allTransaction, setallTransaction] = useState([]);
+  // Fetch user ID and wallet transactions
   useEffect(() => {
     if (login) {
-      getallTransaction();
-      getid();
-    } else {
+      getUserId();
+      getAllTransactions();
     }
-  }, []);
-  const getallTransaction = async () => {
-    await axios({
-      method: "POST",
-      url: "https://cryptofolio-backstack-aiwo.onrender.com/wallet/getwalletTransaction",
-      data: {
-        login: login,
-      },
-      headers: {
-        "Content-type": "application/json",
-      },
-    }).then((res) => {
-      console.log("transactions");
-      console.log(res.data);
+  }, [login]);
 
-      setallTransaction(res.data);
-    });
-  };
-  console.log(allTransaction);
-
-  const [currBalance, setcurrBalance] = useState();
-
-  const getamount = async () => {
-    await axios({
-      method: "POST",
-      url: "https://cryptofolio-backstack-aiwo.onrender.com/wallet/getwalletAmount",
-      data: {
-        login: login,
-      },
-      headers: {
-        "Content-type": "application/json",
-      },
-    }).then((res) => {
-      console.log("current balance");
-
-      setcurrBalance(res.data[0].Amount);
-    });
-  };
-  console.log(currBalance);
-
-  const getusertransaction_byQuantity = async () => {
-    if (Number(Quantity) <= 0) {
-      alert("enter amount");
-    } else {
-      console.log("HIIIIII");
-
-      await getamount();
-
-      let object = {
-        img: state.data.image,
-        CoinId: state.data.id,
-        CoinName: state.data.name,
-        Quantity: Quantity,
-        Amount: (`${state.data.current_price}` / 100) * 70 * Quantity,
-        Date: new Date(),
-        Prise: (`${state.data.current_price}` / 100) * 70,
-        type: "Buy",
-      };
-
-      allTransaction.push(object);
-      console.log(allTransaction);
-
-      console.log((`${state.data.current_price}` / 100) * 70 * Quantity);
-      console.log(currBalance);
-
-      const response = await axios({
-        method: "POST",
-        url: "https://cryptofolio-backstack-aiwo.onrender.com/transactions/transactions",
-        data: {
-          Quantity: Quantity,
-          Amount: (`${state.data.current_price}` / 100) * 70 * Quantity,
-          login: login,
-          CoinName: data.name,
-          Transaction: allTransaction,
-        },
-        headers: {
-          "Content-type": "application/json",
-        },
-      }).then((res) => {
-        console.log("response heuhfiehfal--------------------");
-        console.log(res.data);
-        if (res.data === "NO") {
-          alert("not enough balance");
+  const getUserId = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:3001/dashboard/dashboard", // Updated URL for localhost
+        {
+          method: "POST",
+          body: JSON.stringify({ Token: login }),
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
         }
-        if (res.data === "YES") {
-          fun();
-          // navigate("/market");
-        }
-      });
+      );
+      const json = await response.json();
+      setId(json.id);
+    } catch (error) {
+      console.error("Error fetching user ID:", error);
     }
   };
-  const fun = () => {
-    window.history.go(-1);
+
+  const getAllTransactions = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/wallet/getwalletTransaction", // Updated URL for localhost
+        { login },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      setAllTransactions(response.data);
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+    }
   };
 
-  const getusertransaction_byAmount = async () => {
-    await getamount();
+  const getCurrBalance = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/wallet/getwalletAmount", // Updated URL for localhost
+        { login },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      setCurrBalance(response.data[0]?.Amount || 0);
+    } catch (error) {
+      console.error("Error fetching wallet balance:", error);
+    }
+  };
 
-    console.log((`${state.data.current_price}` / 100) * 70 * Quantity);
-    console.log(currBalance);
+  // Handle buy by quantity
+  const handleBuyByQuantity = async () => {
+    if (Number(quantity) <= 0) {
+      return alert("Please enter a valid quantity");
+    }
 
-    let object = {
-      img: state.data.image,
-      CoinId: state.data.id,
-      CoinName: state.data.name,
-      Quantity:
-        Amount_for_amount / ((`${state.data.current_price}` / 100) * 70),
-      Amount: Amount_for_amount,
+    await getCurrBalance();
+
+    const transactionAmount = (data.current_price / 100) * 70 * quantity;
+
+    const newTransaction = {
+      img: data.image,
+      CoinId: data.id,
+      CoinName: data.name,
+      Quantity: quantity,
+      Amount: transactionAmount,
       Date: new Date(),
-      Prise: (`${state.data.current_price}` / 100) * 70,
+      Price: (data.current_price / 100) * 70,
       type: "Buy",
     };
 
-    allTransaction.push(object);
+    const updatedTransactions = [...allTransactions, newTransaction];
 
-    const response = await axios({
-      method: "POST",
-      url: "https://cryptofolio-backstack-aiwo.onrender.com/transactions/transactions",
-      data: {
-        Quantity:
-          Amount_for_amount / ((`${state.data.current_price}` / 100) * 70),
-        Amount: Amount_for_amount,
-        login: login,
-        CoinName: data.name,
-        Transaction: allTransaction,
-      },
-      headers: {
-        "Content-type": "application/json",
-      },
-    }).then((res) => {
-      console.log("response");
-      console.log(res.data);
-      if (res.data === "NO") {
-        alert("not enough balance");
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/transactions/transactions", // Updated URL for localhost
+        {
+          Quantity: quantity,
+          Amount: transactionAmount,
+          login,
+          CoinName: data.name,
+          Transaction: updatedTransactions,
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      if (response.data === "NO") {
+        alert("Not enough balance");
+      } else if (response.data === "YES") {
+        window.history.back(); // Go back to the previous page
       }
-      if (res.data === "YES") {
-        fun();
-        // navigate("/market");
-      }
-    });
+    } catch (error) {
+      console.error("Error processing transaction:", error);
+    }
   };
 
-  //-----------------transactions--------------------//
+  // Handle buy by amount
+  const handleBuyByAmount = async () => {
+    await getCurrBalance();
 
-  //----------------input value by quantity--------------//
+    const quantityByAmount = amountForAmount / ((data.current_price / 100) * 70);
 
-  const [Quantity, setQuantity] = useState("");
-  const [Amount, setAmount] = useState("");
+    const newTransaction = {
+      img: data.image,
+      CoinId: data.id,
+      CoinName: data.name,
+      Quantity: quantityByAmount,
+      Amount: amountForAmount,
+      Date: new Date(),
+      Price: (data.current_price / 100) * 70,
+      type: "Buy",
+    };
 
+    const updatedTransactions = [...allTransactions, newTransaction];
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/transactions/transactions", // Updated URL for localhost
+        {
+          Quantity: quantityByAmount,
+          Amount: amountForAmount,
+          login,
+          CoinName: data.name,
+          Transaction: updatedTransactions,
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      if (response.data === "NO") {
+        alert("Not enough balance");
+      } else if (response.data === "YES") {
+        window.history.back(); // Go back to the previous page
+      }
+    } catch (error) {
+      console.error("Error processing transaction:", error);
+    }
+  };
+
+  // Handle quantity input change
   useEffect(() => {
-    if (Quantity.length === 0) {
+    if (quantity) {
+      const calcAmount = (data.current_price / 100) * 70 * quantity;
+      setAmount(calcAmount.toLocaleString("en-IN", {
+        maximumFractionDigits: 2,
+        style: "currency",
+        currency: "INR",
+      }));
+    } else {
       setAmount("");
     }
-  }, [Quantity, Amount]);
+  }, [quantity, data]);
 
-  const onchangeQuantity = (e) => {
-    setQuantity(e.target.value);
-  };
-
+  // Handle amount input change
   useEffect(() => {
-    setAmount(
-      ((`${state.data.current_price}` / 100) * 70 * Quantity).toLocaleString(
-        "en-IN",
-        {
-          maximumFractionDigits: 2,
-          style: "currency",
-          currency: "INR",
-        }
-      )
-    );
-  }, [Quantity]);
-
-  //----------------input value by quantity --------------//
-
-  //----------------input value by amount--------------//
-
-  const [Quantity_for_amount, setQuantity_for_amount] = useState("");
-  const [Amount_for_amount, setAmount_for_amount] = useState("");
-
-  useEffect(() => {
-    if (Amount_for_amount.length === 0) {
-      setAmount_for_amount("");
+    if (amountForAmount) {
+      setQuantityForAmount(
+        amountForAmount / ((data.current_price / 100) * 70)
+      );
+    } else {
+      setQuantityForAmount("");
     }
-  }, [Quantity, Amount]);
-
-  const onchangeAmount = (e) => {
-    setAmount_for_amount(e.target.value);
-  };
-
-  useEffect(() => {
-    setQuantity_for_amount(
-      Amount_for_amount / ((`${state.data.current_price}` / 100) * 70)
-    );
-  }, [Amount_for_amount]);
-
-  //----------------input value amount --------------//
+  }, [amountForAmount, data]);
 
   return (
-    <div className="m-5 ">
-      {/* <div className="w-[300px] z-10 grad_bg blur-[220px]  right-[90px] h-[300px] absolute border-2 rounded-full"></div> */}
-
-      <div className=" z-30 w-[80%] mx-auto p-5 bg-[#1d2230] rounded-md">
+    <div className="m-5">
+      <div className="z-30 w-[80%] mx-auto p-5 bg-[#1d2230] rounded-md">
         <div className="font-bold text-white text-center text-[20px] md:text-[22px] mb-12">
           Confirm Payment
         </div>
-        <div className=" m-5 grid grid-cols-1 md:grid-cols-2  ">
+        <div className="m-5 grid grid-cols-1 md:grid-cols-2">
           <div className="p-3 mx-auto bg-[#171b26] rounded-lg text-white pt-6 md:mr-4 mb-4 md:w-[80%]">
             <div className="font-semibold text-white text-center text-[18px] md:text-[20px] mb-4">
               {data?.name}
             </div>
-            <div className=" w-[100px] h-[100px] mx-auto ">
-              <img src={data?.image} alt=""></img>
+            <div className="w-[100px] h-[100px] mx-auto">
+              <img src={data?.image} alt={data?.name} />
             </div>
             <div className="font-semibold text-white text-center text-[16px] md:text-[18px] m-4">
-              Current Prise: {currprise}
+              Current Price: {currPrice}
             </div>
           </div>
 
-          <div className=" grid grid-cols-1 md:grid-cols-2 md:space-x-3 ">
+          <div className="grid grid-cols-1 md:grid-cols-2 md:space-x-3">
+            {/* Buy by Quantity */}
             <div className="p-3 mb-4 mx-auto bg-[#171b26] rounded-lg text-white pt-6">
               <div className="text-center font-medium mb-5 text-[17px]">
-                Buy by Qantity
+                Buy by Quantity
               </div>
-              <div className="grid grid-cols-1  m-3">
-                <label for="" className="font-medium ">
-                  Quantity
-                </label>
+              <div className="grid grid-cols-1 m-3">
+                <label className="font-medium">Quantity</label>
                 <input
-                  type="text"
-                  id=""
-                  name=""
-                  value={Quantity}
-                  onChange={onchangeQuantity}
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
                   className="text-black p-[1px] m-2 text-center"
-                  placeholder="enter quantity "
+                  placeholder="Enter quantity"
                 />
               </div>
-              <div className="grid grid-cols-1  m-3">
-                <div className="font-medium ">Amount: </div>
-                <div className="">{Amount}</div>
+              <div className="grid grid-cols-1 m-3">
+                <div className="font-medium">Amount:</div>
+                <div>{amount}</div>
               </div>
               <button
-                onClick={getusertransaction_byQuantity}
-                className="bg-[#209fe4]  w-[100%]
-               p-1 mt-6  rounded-md font-semibold text-[12px] md:text-[15px] mb-4"
+                onClick={handleBuyByQuantity}
+                className="bg-[#209fe4] w-[100%] p-1 mt-6 rounded-md font-semibold text-[12px] md:text-[15px] mb-4"
               >
                 Buy
               </button>
             </div>
 
+            {/* Buy by Amount */}
             <div className="p-3 mb-4 mx-auto bg-[#171b26] rounded-lg text-white pt-6">
-              <div className="text-center font-medium text-[17px]">
-                Buy by Amount
-              </div>
-              <div className="grid grid-cols-1  m-3">
-                <label for="" className="font-medium ">
-                  Amount
-                </label>
+              <div className="text-center font-medium text-[17px]">Buy by Amount</div>
+              <div className="grid grid-cols-1 m-3">
+                <label className="font-medium">Amount</label>
                 <input
-                  type="Number"
-                  id=""
-                  name=""
-                  value={Amount_for_amount}
-                  onChange={onchangeAmount}
+                  type="number"
+                  value={amountForAmount}
+                  onChange={(e) => setAmountForAmount(e.target.value)}
                   className="text-black p-[1px] m-2 text-center"
-                  placeholder="enter amount "
+                  placeholder="Enter amount"
                 />
               </div>
-              <div className="grid grid-cols-1 m-3 md:mt-5">
-                <div className="font-medium ">Quantity: </div>
-                <div className="text-[13px] md:text-[17px]">
-                  {Quantity_for_amount}
-                </div>
+              <div className="grid grid-cols-1 m-3">
+                <div className="font-medium">Quantity:</div>
+                <div>{quantityForAmount}</div>
               </div>
               <button
-                onClick={getusertransaction_byAmount}
-                className="bg-[#209fe4]  w-[100%]
-               p-1 mt-1  rounded-md font-semibold text-[12px] md:text-[15px]"
+                onClick={handleBuyByAmount}
+                className="bg-[#209fe4] w-[100%] p-1 mt-6 rounded-md font-semibold text-[12px] md:text-[15px] mb-4"
               >
                 Buy
               </button>

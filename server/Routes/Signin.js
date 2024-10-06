@@ -3,24 +3,27 @@ const router = express.Router();
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const jwtSecret = "abcdefghijklmnopqrstuvwxyz";
+const dotenv = require('dotenv');
 
-const { body, validationResult } = require("express-validator");
+dotenv.config();
+
+const jwtSecret = process.env.SECRET;
+
+const { body } = require("express-validator");
 
 router.post(
-  "/Signup",
+  "/Signin",
   body("email", "invalid email").isEmail(),
   body("password", "too small").isLength({ min: 5 }),
   async (req, res) => {
     try {
-      //logic for signin
-
       const username = req.body.email;
       const pswd = req.body.password;
       console.log(pswd);
       let userdata = await User.findOne({ email: username });
-      // console.log(userdata.password);
       console.log({ userdata });
+
+      if(!userdata) res.send("No such user found");
 
       const data = {
         user: {
@@ -38,6 +41,7 @@ router.post(
       }
     } catch (error) {
       console.log(error);
+      
     }
   }
 );

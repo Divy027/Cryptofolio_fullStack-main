@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Profile = require("../models/Profile"); //we select the table
+const Profile = require("../models/Profile");
 
 router.post(
   "/profileupdate",

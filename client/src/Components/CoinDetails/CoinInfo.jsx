@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function CoinInfo({ state, open }) {
   const navigate = useNavigate();
@@ -107,7 +107,6 @@ export default function CoinInfo({ state, open }) {
 
   console.log(currencyRupee);
   console.log(Coindata);
-  // console.log(data.price_change_24h);
 
   return (
     <div className=" bg-[#1d2230] w-fit p-10 rounded-xl text-white mx-auto mt-10 mb-10">

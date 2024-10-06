@@ -1,9 +1,11 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const Transaction = require("../models/Transactions"); //we select the table
-const Wallet = require("../models/Wallet"); //we select the table
+const Transaction = require("../models/Transactions");
+const Wallet = require("../models/Wallet");
 const jwt = require("jsonwebtoken");
-const jwtSecret = "abcdefghijklmnopqrstuvwxyz";
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+const jwtSecret = process.env.SECRET;
 
 const getwalletAmount = async (req, res) => {
   console.log(req.body);
@@ -16,11 +18,6 @@ const getwalletAmount = async (req, res) => {
     console.log(data);
     res.send(data);
   });
-  // .then(async(data) => {
-  //   console.log("updated");
-  //   console.log(data);
-  // })
-  // .catch();
 };
 const getallTransaction = async (req, res) => {
   console.log(req.body);
@@ -42,11 +39,6 @@ const getallTransaction = async (req, res) => {
       res.send(dataempty);
     }
   });
-  // .then(async(data) => {
-  //   console.log("updated");
-  //   console.log(data);
-  // })
-  // .catch();
 };
 
 module.exports = { getwalletAmount, getallTransaction };

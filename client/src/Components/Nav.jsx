@@ -6,7 +6,7 @@ export default function Nav({ open }) {
 
   const handleDashboard = async () => {
     console.log(localStorage.authToken);
-    const response = await fetch("https://cryptofolio-backstack-aiwo.onrender.com/dashboard/dashboard", {
+    const response = await fetch("http://localhost:3001/dashboard/dashboard", {
       method: "POST",
       body: JSON.stringify({ Token: localStorage.authToken }),
       mode: "cors",
@@ -34,7 +34,7 @@ export default function Nav({ open }) {
         <ul className="flex justify-between bg-[#131722] h-[70px] text-white w-[100%] p-5">
           <div>
             <li className="text-[15px] sm:text-[18px] md:text-2xl font-bold  text-white  ">
-              <Link to="/">CryptoFolio</Link>
+              <Link to="/">BlockEx</Link>
             </li>
           </div>
           <div className="text-[20px] font-bold  text-white ">
@@ -72,7 +72,6 @@ export default function Nav({ open }) {
           </div>
         </ul>
       </div>
-      {/* {open && <LoginModal closemod={Open}/>} */}
     </div>
   );
 }

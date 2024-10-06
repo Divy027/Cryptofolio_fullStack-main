@@ -32,8 +32,4 @@ const userSchema=new mongoose.Schema({
     }
 });
 
-
-//we have created the table now we will export this table
-
-
 module.exports=mongoose.model('user',userSchema)
